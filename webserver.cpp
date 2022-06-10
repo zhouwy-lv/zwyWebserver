@@ -132,24 +132,24 @@ void WebServer::eventListen()
     ret = listen(m_listenfd, 5);
     assert(ret >= 0);
 
-    utils.init(TIMESLOT);
+    utils->init(TIMESLOT);
 
     //epoll创建内核事件表
     epoll_event events[MAX_EVENT_NUMBER];
     m_epollfd = epoll_create(5);
     assert(m_epollfd != -1);
 
-    utils.addfd(m_epollfd, m_listenfd, false, m_LISTENTrigmode);
+    utils->addfd(m_epollfd, m_listenfd, false, m_LISTENTrigmode);
     http_conn::m_epollfd = m_epollfd;
 
     ret = socketpair(PF_UNIX, SOCK_STREAM, 0, m_pipefd);
     assert(ret != -1);
-    utils.setnonblocking(m_pipefd[1]);
-    utils.addfd(m_epollfd, m_pipefd[0], false, 0);
+    utils->setnonblocking(m_pipefd[1]);
+    utils->addfd(m_epollfd, m_pipefd[0], false, 0);
 
-    utils.addsig(SIGPIPE, SIG_IGN);
-    utils.addsig(SIGALRM, utils.sig_handler, false);
-    utils.addsig(SIGTERM, utils.sig_handler, false);
+    utils->addsig(SIGPIPE, SIG_IGN);
+    utils->addsig(SIGALRM, utils->sig_handler, false);
+    utils->addsig(SIGTERM, utils->sig_handler, false);
 
     alarm(TIMESLOT);
 
@@ -172,8 +172,8 @@ void WebServer::timer(int connfd, struct sockaddr_in client_address)
     time_t cur = time(NULL);
     timer->expire = cur + 3 * TIMESLOT;
     users_timer[connfd].timer = timer;
-    // utils.m_timer_lst.add_timer(timer);
-    utils.m_timer_heap.add_timer(timer);
+    // utils->m_timer_lst.add_timer(timer);
+    utils->m_timer_heap.add_timer(timer);
 }
 
 //若有数据传输，则将定时器往后延迟3个单位
@@ -182,8 +182,8 @@ void WebServer::adjust_timer(util_timer *timer)
 {
     time_t cur = time(NULL);
     timer->expire = cur + 3 * TIMESLOT;
-    // utils.m_timer_lst.adjust_timer(timer);
-     utils.m_timer_heap.adjust_timer(timer);
+    // utils->m_timer_lst.adjust_timer(timer);
+     utils->m_timer_heap.adjust_timer(timer);
 
     LOG_INFO("%s", "adjust timer once");
 }
@@ -193,8 +193,8 @@ void WebServer::deal_timer(util_timer *timer, int sockfd)
     timer->cb_func(&users_timer[sockfd]);
     if (timer)
     {
-        // utils.m_timer_lst.del_timer(timer);
-        utils.m_timer_heap.del_timer(timer);
+        // utils->m_timer_lst.del_timer(timer);
+        utils->m_timer_heap.del_timer(timer);
     }
 
     LOG_INFO("close fd %d", users_timer[sockfd].sockfd);
@@ -214,7 +214,7 @@ bool WebServer::dealclinetdata()
         }
         if (http_conn::m_user_count >= MAX_FD)
         {
-            utils.show_error(connfd, "Internal server busy");
+            utils->show_error(connfd, "Internal server busy");
             LOG_ERROR("%s", "Internal server busy");
             return false;
         }
@@ -233,7 +233,7 @@ bool WebServer::dealclinetdata()
             }
             if (http_conn::m_user_count >= MAX_FD)
             {
-                utils.show_error(connfd, "Internal server busy");
+                utils->show_error(connfd, "Internal server busy");
                 LOG_ERROR("%s", "Internal server busy");
                 break;
             }
@@ -427,7 +427,7 @@ void WebServer::eventLoop()
         }
         if (timeout)
         {
-            utils.timer_handler();
+            utils->timer_handler();
 
             LOG_INFO("%s", "timer tick");
 

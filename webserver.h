@@ -77,6 +77,8 @@ public:
 
     //定时器相关
     client_data *users_timer;
-    Utils utils;
+    // Utils utils;
+
+    Utils* utils = Utils::get_instance();
 };
 #endif

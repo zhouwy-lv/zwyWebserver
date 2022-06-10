@@ -87,8 +87,12 @@ private:
 class Utils
 {
 public:
-    Utils() {}
-    ~Utils() {}
+
+    static Utils *get_instance()
+    {
+        static Utils instance;
+        return &instance;
+    }
 
     void init(int timeslot);
 
@@ -114,6 +118,10 @@ public:
     time_heap m_timer_heap;
     static int u_epollfd;
     int m_TIMESLOT;
+
+private:
+    Utils() {}
+    ~Utils() {}
 };
 
 void cb_func(client_data *user_data);

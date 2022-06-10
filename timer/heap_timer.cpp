@@ -166,6 +166,10 @@ void time_heap::tick()
         pop_timer();
         tmp = array[0];
     }
+    if(tmp){
+        int time_slot = tmp -> expire - cur; 
+        Utils::get_instance() -> init(time_slot);
+    }
 }
 
 void time_heap::percolate_down( int hole )
