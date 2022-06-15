@@ -59,12 +59,12 @@ public:
         init(capacity);
     }
     
-    time_heap(util_timer** init_array, int size, int capacity) throw (std::exception);
+    time_heap(util_timer** init_array, int size, int capacity);
     ~time_heap();
 
-    void init(int cap) throw (std::exception);
+    void init(int cap) ;
 
-    void add_timer(util_timer* timer) throw (std::exception);
+    void add_timer(util_timer* timer);
     util_timer* top() const;
     void pop_timer();
     void del_timer(util_timer* timer);
@@ -75,7 +75,7 @@ public:
 
 private:
     void percolate_down(int hole);
-    void resize() throw (std::exception);
+    void resize() ;
 
     util_timer** array;
     int capacity;

@@ -1,7 +1,7 @@
 #include "heap_timer.h"
 #include "../http/http_conn.h"
 
-void time_heap::init(int cap) throw( std:: exception)
+void time_heap::init(int cap)
 {
     array = new util_timer* [capacity];
     if(!array)
@@ -16,7 +16,7 @@ void time_heap::init(int cap) throw( std:: exception)
     }
 }
 
-time_heap::time_heap(util_timer** init_array, int size, int capacity) throw (std::exception) : cur_size(size), capacity(capacity)
+time_heap::time_heap(util_timer** init_array, int size, int capacity) : cur_size(size), capacity(capacity)
 {
     if(capacity < size)
     {
@@ -57,7 +57,7 @@ time_heap::~time_heap()
     delete [] array;
 }
 
-void time_heap::add_timer(util_timer* timer) throw (std::exception)
+void time_heap::add_timer(util_timer* timer)
 {
     if( !timer )
     {
@@ -156,6 +156,10 @@ void time_heap::tick()
 
         if(tmp -> expire > cur)
         {
+            int time_slot = tmp -> expire - cur; 
+            std::cout << time_slot<<endl;
+            std::cout <<"temp:"<< tmp -> expire<<"cur:"<< cur<<endl;
+            Utils::get_instance() -> init(time_slot);
             break;
         }
 
@@ -166,10 +170,12 @@ void time_heap::tick()
         pop_timer();
         tmp = array[0];
     }
-    if(tmp){
-        int time_slot = tmp -> expire - cur; 
-        Utils::get_instance() -> init(time_slot);
-    }
+    // if(tmp){
+    //     int time_slot = tmp -> expire - cur; 
+    //     std::cout << time_slot<<endl;
+    //     std::cout <<"temp:"<< tmp -> expire<<"cur:"<< cur<<endl;
+    //     Utils::get_instance() -> init(time_slot);
+    // }
 }
 
 void time_heap::percolate_down( int hole )
@@ -197,7 +203,7 @@ void time_heap::percolate_down( int hole )
     timerLocation[temp] = hole;
 }
 
-void time_heap::resize() throw ( std::exception )
+void time_heap::resize()
 {
     util_timer** temp = new util_timer*[2*capacity];
     for(int i = 0; i < 2*capacity; i ++)
